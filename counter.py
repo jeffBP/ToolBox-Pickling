@@ -2,7 +2,7 @@
 
 from os.path import exists
 import sys
-from pickle import dump, load
+import pickle
 
 
 def update_counter(file_name, reset=False):
@@ -19,18 +19,31 @@ def update_counter(file_name, reset=False):
     reset: True if the counter in the file should be rest.
     returns: the new counter value
 
-    >>> update_counter('blah.txt',True)
+    >>> update_counter('blah.p',True)
     1
-    >>> update_counter('blah.txt')
+    >>> update_counter('blah.p')
     2
-    >>> update_counter('blah2.txt',True)
+    >>> update_counter('blah2.p',True)
     1
-    >>> update_counter('blah.txt')
+    >>> update_counter('blah.p')
     3
-    >>> update_counter('blah2.txt')
+    >>> update_counter('blah2.p')
     2
     """
-    pass
+    if not reset:
+        try:
+            counter = int(pickle.load(open(file_name, "rb")))
+            counter += 1
+            print(counter)
+            pickle.dump(str(counter), open(file_name, "wb"))
+        except FileNotFoundError:
+            open(file_name, 'a').close()
+            pickle.dump(str(1), open(file_name, "wb"))
+            print(1)
+    else:
+        open(file_name, 'a').close()
+        pickle.dump(str(1), open(file_name, "wb"))
+        print(1)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
